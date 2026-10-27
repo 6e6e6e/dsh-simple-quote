@@ -1,0 +1,6 @@
+# Bundle patch layer for dsh-simple-quote: one Host row (an empty `apply`)
+# plus the `dsh.client` declaration in package.json, which loads ./client.js
+# as the browser half.
+- insert:
+    - id: dsh-simple-quote
+      name: dsh-simple-quote

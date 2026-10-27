@@ -1,0 +1,10 @@
+{
+  "meta": {
+    "title": "Simple Quote",
+    "description": "Quote selected conversation text into the composer with one click."
+  },
+  "menu": {
+    "addToInput": "Add to input",
+    "hint": "Quote the selected text into the composer"
+  }
+}
