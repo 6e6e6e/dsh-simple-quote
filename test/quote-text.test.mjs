@@ -56,11 +56,11 @@ test('blank lines collapse outside fences only', () => {
   assert.equal(normalizeBlankLines(input), 'a\n\nb\n```\nx\n\n\ny\n```\n\nz')
 })
 
-test('menu sits right of the pointer and flips left near the right edge', () => {
+test('menu sits below-right of the pointer and flips at the edges', () => {
   const viewport = { width: 1024, height: 768 }
   const size = { width: 120, height: 30 }
-  assert.deepEqual(menuPosition({ x: 100, y: 100 }, size, viewport), { left: 110, top: 85 })
-  assert.deepEqual(menuPosition({ x: 1000, y: 700 }, size, viewport), { left: 870, top: 685 })
+  assert.deepEqual(menuPosition({ x: 100, y: 100 }, size, viewport), { left: 110, top: 110 })
+  assert.deepEqual(menuPosition({ x: 1000, y: 700 }, size, viewport), { left: 870, top: 710 })
   assert.deepEqual(menuPosition({ x: 1000, y: 760 }, size, viewport), { left: 870, top: 720 })
   assert.deepEqual(menuPosition({ x: 5, y: 5 }, size, viewport), { left: 15, top: 15 })
 })
