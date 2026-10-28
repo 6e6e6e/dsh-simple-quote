@@ -1,6 +1,6 @@
 {
   "name": "dsh-simple-quote",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "description": "Quote selected conversation text into the composer with one click.",
   "type": "module",
@@ -35,7 +35,7 @@
   },
   "scripts": {
     "build": "node scripts/build-client.mjs",
-    "test": "node --test test/quote-text.test.mjs test/selection-markdown.test.mjs test/bundle.test.mjs",
+    "test": "node --test test/quote-text.test.mjs test/selection-markdown.test.mjs test/bundle.test.mjs test/edge-cases.test.mjs",
     "prepack": "node scripts/build-client.mjs",
     "pretest": "node scripts/build-client.mjs"
   },

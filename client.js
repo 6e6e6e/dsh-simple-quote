@@ -268,7 +268,13 @@ window.__ModuleLoader__.load({
       if (last >= 0xd800 && last <= 0xdbff) cut = cut.slice(0, -1)
       cut = cut.replace(/\s+$/u, '')
       const open = openFence(cut)
-      if (open !== null) cut += `\n${open.prefix}${open.fence}`
+      if (open !== null) {
+        // The cut may land inside the closing fence line, leaving a partial run of
+        // backticks (fewer than the opening fence). That fragment is not content.
+        const partial = new RegExp('\\n[ \\t]*(?:>[ \\t]*)*`{1,' + (open.fence.length - 1) + '}$', 'u')
+        cut = cut.replace(partial, '')
+        cut += `\n${open.prefix}${open.fence}`
+      }
       return `${cut}\n…`
     }
 
@@ -512,6 +518,22 @@ window.__ModuleLoader__.load({
       return formatTableRows(selected[0], selected.slice(1))
     }
 
+    /** The TeX source of one KaTeX root, as inline or display math. */
+    function katexMarkdown(el) {
+      const annotation = el.querySelector('annotation[encoding="application/x-tex"]')
+      const tex = (annotation?.textContent ?? '').trim()
+      if (tex !== '') return el.closest('.katex-display') !== null ? `$$${tex}$$` : `$${tex}$`
+      return (el.querySelector('.katex-mathml')?.textContent ?? '').trim()
+    }
+
+    /**
+     * Escape brackets in a link label. An unescaped `]` closes the Markdown link
+     * early (`[a]b](/doc)` renders as a link to nowhere).
+     */
+    function escapeLinkLabel(text) {
+      return text.replace(/([\[\]])/gu, '\\$1')
+    }
+
     function serializeElement(el, range, ctx) {
       const tag = el.tagName
       if (el.getAttribute('aria-hidden') === 'true') return ''
@@ -522,12 +544,7 @@ window.__ModuleLoader__.load({
 
       // KaTeX renders a MathML copy plus an aria-hidden visual copy. Quote the TeX
       // source once instead of concatenating both trees.
-      if (el.classList?.contains('katex')) {
-        const annotation = el.querySelector('annotation[encoding="application/x-tex"]')
-        const tex = (annotation?.textContent ?? '').trim()
-        if (tex !== '') return el.closest('.katex-display') !== null ? `$$${tex}$$` : `$${tex}$`
-        return (el.querySelector('.katex-mathml')?.textContent ?? '').trim()
-      }
+      if (el.classList?.contains('katex')) return katexMarkdown(el)
       if (el.closest('.katex') !== null) return ''
 
       if (tag === 'PRE') return codeBlock(el, range)
@@ -581,7 +598,7 @@ window.__ModuleLoader__.load({
         if (inner.trim() === '') return inner
         const href = (el.getAttribute('href') ?? '').trim()
         if (ctx.inLink || href === '' || href.startsWith('#')) return inner
-        return wrapDelimited(inner, '[', `](${href})`)
+        return wrapDelimited(escapeLinkLabel(inner), '[', `](${href})`)
       }
 
       if (tag === 'STRONG' || tag === 'B') return wrapInline('**', serializeChildren(el, range, ctx))
@@ -626,7 +643,7 @@ window.__ModuleLoader__.load({
       if (tag === 'A') {
         const href = (el.getAttribute('href') ?? '').trim()
         if (href === '' || href.startsWith('#')) return inner
-        return wrapDelimited(inner, '[', `](${href})`)
+        return wrapDelimited(escapeLinkLabel(inner), '[', `](${href})`)
       }
       if (tag === 'STRONG' || tag === 'B') return wrapInline('**', inner)
       if (tag === 'EM' || tag === 'I') return wrapInline('*', inner)
@@ -650,6 +667,10 @@ window.__ModuleLoader__.load({
           if (pre !== null) {
             // A partial code selection still becomes a fenced block.
             markdown = codeBlock(pre, range)
+          } else if (element !== null && element.closest('.katex') !== null) {
+            // A partial formula selection (even on the aria-hidden visual copy)
+            // quotes the TeX source, not the glyph text.
+            markdown = katexMarkdown(element.closest('.katex'))
           } else {
             let out = wrapInlineAncestors(root, textWithin(root, range))
             const heading = element === null ? null : element.closest('h1, h2, h3, h4, h5, h6')
