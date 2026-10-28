@@ -16,7 +16,7 @@
 
 ## 安装
 
-从 [Releases](https://github.com/6e6e6e/dsh-simple-quote/releases) 下载 `dsh-simple-quote-x.y.z.tgz`，在 DSH 的插件面板里选择安装本地包、指向这个文件。懒得自己点的话，把 Release 链接丢给 DSH，让它帮你装也行。
+从 [Releases](https://github.com/6e6e6e/dsh-simple-quote/releases) 下载安装包，在 DSH 的插件面板里选择安装本地包、指向这个文件。固定地址 [`dsh-simple-quote.tgz`](https://github.com/6e6e6e/dsh-simple-quote/releases/latest/download/dsh-simple-quote.tgz) 永远指向最新版；想装指定的版本，就进 Release 页面挑带版本号的那个。懒得自己点的话，把链接丢给 DSH，让它帮你装也行。
 
 ## 怎么用
 
