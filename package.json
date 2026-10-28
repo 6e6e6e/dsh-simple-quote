@@ -35,6 +35,7 @@
   },
   "scripts": {
     "build": "node scripts/build-client.mjs",
+    "release": "node scripts/release.mjs",
     "test": "node --test test/quote-text.test.mjs test/selection-markdown.test.mjs test/bundle.test.mjs test/edge-cases.test.mjs",
     "prepack": "node scripts/build-client.mjs",
     "pretest": "node scripts/build-client.mjs"
